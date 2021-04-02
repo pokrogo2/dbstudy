@@ -1,60 +1,47 @@
-DROP TABLE CUSTOMER;
-DROP TABLE BANK;
-CREATE TABLE BANK
-(
-    BANK_CODE VARCHAR2(20) ,
-    BANK_NAME VARCHAR2(30)
 
-    );
     
-    CREATE TABLE CUSTOMER(
-    NO NUMBER ,
-    NAME VARCHAR2(30) NOT NULL,
-    PHONE VARCHAR2(30) ,
-    AGE NUMBER ,
-    AGE2 NUMBER ,
-    BANK_CODE VARCHAR2(20)
+create table department(
+    dept_no number primary key,
+    dept_name varchar2(15) not null,
+    location varchar2(15) not null
+);
+    
+create table employee(
+    emp_no number primary key,
+    name varchar2(20) not null,
+    depart number references department(dept_no),
+    position varchar2(20),
+    gender char(2),
+    hire_date DATE,
+    salary number
+);
+    insert into department values(1,'영업부','대구');
+insert into department values(2,'인사부','서울');
+insert into department values(3,'총무부','대구');
+insert into department values(4,'기획부','서울');
 
-    );
+    insert  INTO employee VALUES (1001, '구창민', 1, '과장', 'M', '95-05-01', 5000000);
+   insert INTO employee VALUES (1002, '김민서', 1, '사원', 'M', '17-09-01', 2500000);
+   insert INTO employee VALUES (1003, '이은영', 2, '부장', 'F', '90-09-01', 5500000);
+   insert INTO employee VALUES (1004, '한성실', 2, '과장', 'F', '93-04-01', 5000000);
 
-    --칼럼의 추가
-    --alter table 테이블 칼럼명 타입 [제약조건]
-    --1.bank테이블에 bank_phone 칼럼추가
-    alter table bank add bank_phone varchar2(15);
+--수정
+    update department set location ='인천' where dept_name ='영업부';
+    update department set location ='인천' where dept_no =1;
+    
+    --과장과 부장의 월급을 10%인상하시오
+    update employee set salary = salary*1.1 where position ='과장' or  position='부장';
+    update employee set salary = salary*1.1 where position in('과장','부장');
+    
+    --총무부 >총괄 , 대구 > 광주 , 
+    update department set location = '광주' ,dept_name ='총괄팀' where dept_no=3;
+    
+    --삭제
+    --모든 employee를 삭제
+    delete from employee; --잘못삭제하면 rollback으로 취소가능
+    truncate table employee; --빠르게삭제 취소불가능
+    
+    delete from department where dept_no =4;
     
     
-    --테이블 구조확인
-    DESC bank;
-    DESC customer;
-    --칼럼의 수정
-    --alter table 테이블 modify칼럼명 타입;
-    --1. bank테이블의 bank_name칼럼을 varchar2(15)로 수정
-    alter table bank modify bank_name varchar2(15);
-    --2.customer 테이블의 age칼럼을 number(3)으로 수정
-    alter table customer modify age number(3);
-    
-    --3.customer 테이블의 phone칼럼을 not null로 수정
-    alter table customer modify phone varchar2(30) not null;
-    
-    --4.customer 테이블의 phone칼럼을 null로수정
-    alter table customer modify phone varchar2(30);
-    
-    --칼럼삭제
-    --alter table 테이블 drop column 칼럼명;
-    --1.bank 테이블의  bank_phone 칼럼을 삭제한다.
-    alter table bank drop column bank_phone;
-    
-    --칼럼의 이름변경
-    --alter table 테이블 rename column 기본칼럼명 to 신규칼럼명;
-    --1.customer 테이블의 phone칼럼명을 contack으로 수정한다.
-    alter table customer rename column phone to contact;
-    
-        --테이블 변경
-    --ALTER 테이블이 기본
---    
---    ALTER TABLE BANK ADD CONSTRAINT BANK_PK PRIMARY KEY (BANK_CODE);
---    ALTER TABLE CUSTOMER ADD CONSTRAINT CUSTOMER_PK PRIMARY KEY(NO);
---    ALTER TABLE CUSTOMER ADD CONSTRAINT CUSTOMER_UQ UNIQUE (PHONE);
---    ALTER TABLE CUSTOMER ADD CONSTRAINT CUSTOMER_CK CHECK(AGE BETWEEN 0 AND 100);
---    ALTER TABLE CUSTOMER ADD CONSTRAINT CUSTOMER_BANK_FK FOREIGN KEY(BANK_CODE) REFERENCES BANK(BANK_CODE);
     
