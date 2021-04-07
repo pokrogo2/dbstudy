@@ -1,87 +1,139 @@
---±¹°¡
-create table nation
+CREATE TABLE department
 (
-    nation_code number(3) ,
-    nation_name varchar2(30),
-    nation_rank number,
-    nation_curr_rank number,
-    nation_parti_person number,
-    nation_parti_event number
-    );
-    --Á¾¸ñ
-create table event
-(   
-    event_code number(5),
-    event_name varchar2(30),
-    event_info varchar2(1000),
-    event_first_year number(4)
-    );
-    --¼±¼ö
-create table player
+    dept_no NUMBER,
+    dept_name VARCHAR2(10),
+    location VARCHAR2(10)
+);
+CREATE TABLE employee
 (
-    player_code number(5),
-    nation_code number(3),
-    event_code number(5),
-    player_age number(3),
-    player_rank number
-    );
---ÀÏÁ¤
-create table schedule
-(
-    nation_code number(3),
-    event_code number(5),
-    schedule_info varchar2(1000),
-    schedule_begin date,
-    schedule_end date
-    );
+    emp_no NUMBER,
+    name VARCHAR2(10),
+    depart NUMBER,
+    position VARCHAR2(10),
+    gender VARCHAR2(1),
+    hire_date DATE,
+    salary NUMBER
+);
+
+ALTER TABLE department ADD CONSTRAINT department_pk PRIMARY KEY(dept_no);
+ALTER TABLE employee ADD CONSTRAINT employee_pk PRIMARY KEY(emp_no);
+ALTER TABLE employee ADD CONSTRAINT employee_department_fk FOREIGN KEY(depart) REFERENCES department(dept_no);
+
+
+INSERT INTO department 
+    (dept_no, dept_name, location) 
+VALUES 
+    (1, 'ì˜ì—…ë¶€', 'ëŒ€êµ¬');
+INSERT INTO department(dept_no, dept_name, location) VALUES (2, 'ì¸ì‚¬ë¶€', 'ì„œìš¸');
+INSERT INTO department(dept_no, dept_name, location) VALUES (3, 'ì´ë¬´ë¶€', 'ëŒ€êµ¬');
+INSERT INTO department(dept_no, dept_name, location) VALUES (4, 'ê¸°íšë¶€', 'ì„œìš¸');
+
+INSERT INTO employee 
+    (emp_no, name, depart, position, gender, hire_date, salary)
+VALUES
+    (1001, 'êµ¬ì°½ë¯¼', 1, 'ê³¼ì¥', 'M', '95-05-01', 5000000);
+INSERT INTO employee(emp_no, name, depart, position, gender, hire_date, salary) VALUES (1002, 'ê¹€ë¯¼ì„œ', 1, 'ì‚¬ì›', 'M', '17-09-01', 2500000);
+INSERT INTO employee(emp_no, name, depart, position, gender, hire_date, salary) VALUES (1003, 'ì´ì€ì˜', 2, 'ë¶€ì¥', 'F', '90-09-01', 5500000);
+INSERT INTO employee(emp_no, name, depart, position, gender, hire_date, salary) VALUES (1004, 'í•œì„±ì¼', 2, 'ê³¼ì¥', 'M', '93-04-01', 5000000);
+
+COMMIT;
+
+
+--ì¹´í…Œì „ ê³±
+select
+     e.emp_no
+    ,e.name
+    ,d.dept_name
+    ,e.position
+    ,e.hire_date
+    ,e.salary
+    from employee e,department d;
+
+select
+     e.emp_no
+    ,e.name
+    ,d.dept_name
+    ,e.position
+    ,e.hire_date
+    ,e.salary
+  from employee e
+ cross join department d;
     
-alter table nation add constraint nation_pk primary key (nation_code);
-alter table event add constraint event_pk primary key (event_code);
-alter table player add constraint player_pk primary key(player_code);
-alter table player add constraint player_event_fk foreign key (event_code)references event(event_code);
-alter table player add constraint player_nation_fk foreign key (nation_code) references nation(nation_code);
-alter table schedule add constraint schedule_nation_fk foreign key (nation_code) references nation(nation_code);
-alter table schedule add constraint schedule_event_fk foreign key (event_code)references event(event_code);
-alter table schedule add constraint schedule_pk primary key(nation_code,event_code);
+--ë‚´ë¶€ì¡°ì¸
+--inner join
 
+select 
+     emp_no
+    ,dept_name
+    ,name
+    ,position
+    ,hire_date
+    ,salary
+  from employee e inner join department d
+   on e.depart = d.dept_no;
 
+select 
+     emp_no
+    ,dept_name
+    ,name
+    ,position
+    ,hire_date
+    ,salary
+  from employee e , department d
+ where e.depart = d.dept_no;
+ 
+alter table employee disable constraint employee_department_fk;    
+--'ì°¸ì¡°ë¬´ê²°ì„±'
+insert into employee(emp_no,name,depart,position,gender,hire_date,salary) values(1005,'ê¹€ë¯¸ë‚˜',5,'ì‚¬ì›','F','2018-05-01',1800000);
 
+    
+--ëª¨ë“ ì‚¬ì›ì˜ no,name,position dept_nameì¶œë ¥
+select
+     e.emp_no
+    ,e.name
+    ,d.dept_name
+    ,e.position
+  from employee e left outer join department d
+  on e.depart = d.dept_no;
+    
+select
+     e.emp_no
+    ,e.name
+    ,d.dept_name
+    ,e.position
+  from employee e , department d
+ where e.depart = d.dept_no(+);
 
-
---Á¦¾àÁ¶°ÇÀÇ »èÁ¦
---alter table Å×ÀÌºí drop constraint Á¶°Ç;
-
-alter table player drop constraint player_nation_fk;
-alter table schedule drop constraint schedule_nation_fk;
-alter table nation drop constraint nation_pk; --nation pk¸¦ Âü°íÇÏ´Â ¿Ü·¡Å°¸¦ ¸ÕÀúÁö¿ö¾ßÇÑ´Ù.
-alter table player drop constraint player_event_fk;
-alter table schedule drop constraint schedule_event_fk;
-
-alter table event drop constraint event_pk; --event pk¸¦ ÂüÁ¶ÇÏ´Â ¿Ü·¡Å°¸¦ Áö¿ö¾ßÇÔ.
-
-alter table player drop constraint player_pk;
-alter table schedule drop constraint schedule_pk;
-
---Á¦¾àÁ¶°ÇÀÇ È®ÀÎ
---Á¦¾àÁ¶°ÇÀ» ÀúÀåÇÏ°íÀÖ´Â DD(DATA Dictionary):USER_CONSTRAINTS
-
-DESC user_constraints;
-select constraint_name,table_name from user_constraints;
-
-
-select constraint_name,table_name from user_constraints where table_name='PLAYER';
-
---Á¦¾àÁ¶°ÇÀÇ ºñ È°¼ºÈ­
-
-
-alter table player disable constraint player_nation_fk;
-alter table player enable constraint player_nation_fk;
-
-
-
-
-
-
-
-
+select
+     e.emp_no
+    ,e.name
+    ,d.dept_name
+    ,e.position
+  from department d right outer join employee e
+  on e.depart = d.dept_no;
+    
+    
+select
+     e.emp_no
+    ,e.name
+    ,d.dept_name
+    ,e.position
+  from department d , employee e
+  where e.depart = d.dept_no(+);
+    
+/*
+ dept_no ì‚¬ì›ìˆ˜
+ 1          2
+ 2          2
+ 3          0
+ 4          0
+*/
+-- ëª¨ë“  depart
+select
+     d.dept_no
+    ,count(e.depart)
+  from department d left outer join employee e
+ on  d.dept_no = e.depart
+ group by d.dept_no;
+ 
 
