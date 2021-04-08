@@ -142,3 +142,47 @@ select
  where department_id is not null
  group by department_id
  order by department_id;
+
+--\리뷰 1 모든 사원들의 name(first_name,last_name을 합침) dept_name을 조회하시오
+
+--리뷰 2 서울에서 근무하는 사원들의 emp_no,name을 조회하시오.
+
+--리뷰 3 모든 사원들의 emp_no name dept_name
+--리뷰1. 모든 사원들의 name, dept_name
+select 
+     e.name
+    ,d.dept_name
+  from department d,employee e
+ where d.dept_no = e.depart; --내부조인
+
+select
+     e.name
+    ,d.dept_name
+  from department d inner join employee e
+    on d.dept_no = e.depart;
+--리뷰2 서울에서 근무하는 사원들의 emp_no name 조회
+select
+     emp_no
+    ,name
+  from department d, employee e
+ where d.dept_no = e.depart --조인먼저작성
+ and d.location = '서울';
+ 
+ select
+     emp_no
+    ,name
+  from department d inner join employee e
+  on d.dept_no = e.depart
+  where d.loction ='서울';
+  --리뷰 3 모든사웓늘의 name,dept_name 조회 부서없는사람도 조회하시오
+select 
+    e.name
+    ,d.dept_name
+  from department d,employee e
+ where d.dept_no(+) = e.depart; --+가 있는테이블은 일치하는정보만 조회 +없으면 전체
+
+select 
+    e.name
+    ,d.dept_name
+  from department d right outer join employee e
+   on d.dept_no = e.depart;

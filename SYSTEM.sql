@@ -1,3 +1,2 @@
-drop user spring cascade;
-create user spring identified by 1111;
-grant connect,resource to spring;
+grant dba to spring;
+grant create view to spring;
